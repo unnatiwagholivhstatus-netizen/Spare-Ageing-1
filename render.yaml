@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: spare-parts-dashboard
+    runtime: python
+    pythonVersion: 3.13
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -w 1 -k uvicorn.workers.UvicornWorker app:app"
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: PYTHONUNBUFFERED
+        value: "true" 
