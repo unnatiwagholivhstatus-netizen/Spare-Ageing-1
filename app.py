@@ -119,10 +119,10 @@ def load_accessories_mapping():
             print(f"✓ Loaded {len(accessories_mapping)} accessories model mappings")
             return True
         else:
-            print(f"⚠️  Accessories model file not found: {accessories_model_file}")
+            print(f"  Accessories model file not found: {accessories_model_file}")
             return False
     except Exception as e:
-        print(f"⚠️  Error loading accessories mapping: {e}")
+        print(f"  Error loading accessories mapping: {e}")
         return False
 
 def get_model_group(part_no):
@@ -150,14 +150,14 @@ def process_excel_to_csv():
     print("Processing Excel file to CSV...")
     
     if not os.path.exists(input_file):
-        print(f"⚠️  File not found: {input_file}")
+        print(f"  File not found: {input_file}")
         return None, 0, None
     
     try:
         df = pd.read_excel(input_file)
         print(f"Successfully loaded {len(df)} rows from Excel")
     except Exception as e:
-        print(f"⚠️  Error reading Excel file: {e}")
+        print(f"  Error reading Excel file: {e}")
         return None, 0, None
     
     today = datetime.now().date()
@@ -316,7 +316,7 @@ def process_excel_to_csv():
             break
     
     if last_issue_col_local is None or last_purchase_col_local is None:
-        print("⚠️  Could not find required columns")
+        print("  Could not find required columns")
         return None, 0, None
     
     location_col_local = None
@@ -386,13 +386,13 @@ def process_excel_to_csv():
         print(f"✓ Model Group column added based on {part_no_col_local}")
     else:
         df['Model Group'] = ""
-        print("⚠️  Part No column not found, Model Group column will be empty")
+        print("  Part No column not found, Model Group column will be empty")
     
     try:
         df.to_csv(output_csv, index=False)
         print(f"\n✓ Processed data saved to CSV: {output_csv}")
     except Exception as e:
-        print(f"⚠️  Error saving CSV: {e}")
+        print(f"  Error saving CSV: {e}")
         return None, 0, None
     
     return output_csv, total_gndp_calc, gndp_column_local
@@ -490,7 +490,7 @@ try:
     csv_file, total_gndp, gndp_column = process_excel_to_csv()
     
     if csv_file is None:
-        print("\n⚠️  Excel file not processed successfully")
+        print("\n  Excel file not processed successfully")
         excel_error = "Excel file not found or has errors. Please add 'Spares Ageing Report.xlsx' to the project root."
         df = None
     else:
@@ -498,12 +498,12 @@ try:
             df = pd.read_csv(csv_file)
             print(f"\n✓ Successfully loaded {len(df)} rows from CSV")
         except Exception as e:
-            print(f"\n⚠️  Error loading CSV: {e}")
+            print(f"\n  Error loading CSV: {e}")
             excel_error = f"Error loading data: {str(e)}"
             df = None
             
 except Exception as e:
-    print(f"\n⚠️  Unexpected error: {e}")
+    print(f"\n  Unexpected error: {e}")
     excel_error = f"Error processing Excel file: {str(e)}"
     df = None
 
@@ -511,7 +511,7 @@ last_reload_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 last_file_modified = get_file_modified_time(excel_file_path)
 
 if df is not None:
-    print("\n🚀 OPTIMIZATION: Pre-computing column names...")
+    print("\n OPTIMIZATION: Pre-computing column names...")
     
     for col in df.columns:
         if 'last' in str(col).lower() and 'issue' in str(col).lower() and 'date' in str(col).lower():
@@ -559,7 +559,7 @@ if df is not None:
             break
     
     # ============= DEBUG: Print all column names =============
-    print("\n📋 ============ EXCEL FILE COLUMNS ============")
+    print("\n ============ EXCEL FILE COLUMNS ============")
     print("All columns in your Excel file:")
     for i, col in enumerate(df.columns, 1):
         print(f"  {i}. {col}")
@@ -594,7 +594,7 @@ if df is not None:
     print(f"  - Locations: {len(locations)}")
     print(f"  - Part Categories: {len(part_categories)}")
 else:
-    print(f"\n⚠️  {excel_error}")
+    print(f"\n  {excel_error}")
 
 # ============= API ENDPOINTS =============
 
@@ -620,7 +620,7 @@ async def dashboard():
         <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f1f5f9;">
             <div class="card" style="width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                 <div class="card-body p-5">
-                    <h1 class="text-danger mb-3">⚠️ Data Not Available</h1>
+                    <h1 class="text-danger mb-3"> Data Not Available</h1>
                     <p class="card-text mb-4"><strong>Error:</strong> {excel_error}</p>
                     <div class="alert alert-info">
                         <h6>To fix this:</h6>
@@ -775,7 +775,7 @@ async def get_location_part_category_summary(
             return {"summary": [], "total": {}, "part_categories": []}
         
         if not part_category_col:
-            print("⚠️  Part Category column not detected")
+            print("  Part Category column not detected")
             return {
                 "summary": [],
                 "total": {},
@@ -784,7 +784,7 @@ async def get_location_part_category_summary(
             }
         
         if part_category_col not in df.columns:
-            print(f"❌ Part Category column '{part_category_col}' not in DataFrame columns")
+            print(f" Part Category column '{part_category_col}' not in DataFrame columns")
             return {
                 "summary": [],
                 "total": {},
@@ -799,7 +799,7 @@ async def get_location_part_category_summary(
                 abc_category, ris, part_number
             )
         except Exception as e:
-            print(f"❌ Filter error: {e}")
+            print(f" Filter error: {e}")
             filtered_df = df.copy()
         
         try:
@@ -808,13 +808,13 @@ async def get_location_part_category_summary(
                 for x in filtered_df[part_category_col].dropna().unique() 
                 if pd.notna(x) and str(x).strip() != ''
             ])
-            print(f"✅ Found {len(all_part_categories)} part categories")
+            print(f" Found {len(all_part_categories)} part categories")
         except Exception as e:
-            print(f"❌ Error extracting part categories: {e}")
+            print(f" Error extracting part categories: {e}")
             all_part_categories = []
         
         if not location_col or location_col not in filtered_df.columns:
-            print(f"⚠️  Location column not found: {location_col}")
+            print(f"  Location column not found: {location_col}")
             return {
                 "summary": [],
                 "total": {},
@@ -823,7 +823,7 @@ async def get_location_part_category_summary(
             }
         
         if not gndp_column or gndp_column not in filtered_df.columns:
-            print(f"⚠️  GNDP column not found: {gndp_column}")
+            print(f"  GNDP column not found: {gndp_column}")
             return {
                 "summary": [],
                 "total": {},
@@ -846,7 +846,7 @@ async def get_location_part_category_summary(
                         cat_df = loc_df[loc_df[part_category_col] == part_cat]
                         value = float(cat_df[gndp_column].sum()) if len(cat_df) > 0 else 0.0
                     except Exception as e:
-                        print(f"⚠️  Error for {loc}/{part_cat}: {e}")
+                        print(f"  Error for {loc}/{part_cat}: {e}")
                         value = 0.0
                     
                     row_data[part_cat] = value
@@ -855,10 +855,10 @@ async def get_location_part_category_summary(
                 row_data['total'] = total_value
                 summary_data.append(row_data)
             
-            print(f"✅ Processed {len(summary_data)} locations")
+            print(f" Processed {len(summary_data)} locations")
         
         except Exception as e:
-            print(f"❌ Error processing locations: {e}")
+            print(f" Error processing locations: {e}")
             import traceback
             traceback.print_exc()
         
@@ -872,10 +872,10 @@ async def get_location_part_category_summary(
                 grand_total += col_total
             
             total_row['total'] = grand_total
-            print(f"✅ Grand Total: {grand_total}")
+            print(f" Grand Total: {grand_total}")
         
         except Exception as e:
-            print(f"❌ Error calculating totals: {e}")
+            print(f" Error calculating totals: {e}")
         
         result = {
             "summary": summary_data,
@@ -883,11 +883,11 @@ async def get_location_part_category_summary(
             "part_categories": all_part_categories
         }
         
-        print(f"✅ location_part_category_summary returned successfully")
+        print(f" location_part_category_summary returned successfully")
         return result
     
     except Exception as e:
-        print(f"❌ CRITICAL ERROR in location_part_category_summary:")
+        print(f" CRITICAL ERROR in location_part_category_summary:")
         print(f"   {str(e)}")
         import traceback
         traceback.print_exc()
